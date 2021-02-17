@@ -17,9 +17,38 @@ import os
 import re
 
 
-112
+
 
 class Ui_MainWindow(QMainWindow):
+    def jiagongchang(self):
+        self.textEdit.setText("")
+        wenjianzonghe = []
+        xmind_files = []
+        result=[]
+        dizhi=self.lineEdit.text()
+        leirong=self.lineEdit_2.text()
+        for dirpath, dirname, filename in os.walk(dizhi):
+            for filenamex in filename:
+                wenjianzonghe.append(dirpath + '\\' + filenamex)
+
+        for wenjainzonghex in wenjianzonghe:
+            bianshi = os.path.splitext(wenjainzonghex)[-1]
+            if bianshi == ".xmind":
+                xmind_files.append(wenjainzonghex)
+
+        for XFX in xmind_files:
+            neirong = xmindparser.xmind_to_dict(XFX)
+            panduan = re.search(leirong, str(neirong))
+            if panduan != None:
+                result.append(XFX)
+
+        if len(result)==0:
+            self.textEdit.append("没有找到任何匹配文件")
+        else:
+            for resultx in result:
+                self.textEdit.append(resultx)
+
+
     def __init__(self):
         super(Ui_MainWindow,self).__init__()
         self.setWindowTitle("MainWindow")
@@ -48,6 +77,8 @@ class Ui_MainWindow(QMainWindow):
         self.statusbar = QtWidgets.QStatusBar(self)
         self.statusbar.setObjectName("statusbar")
         self.setStatusBar(self.statusbar)
+        self.pushButton.clicked.connect(lambda:self.jiagongchang())
+
 
         self.retranslateUi()
         QtCore.QMetaObject.connectSlotsByName(self)
@@ -69,21 +100,6 @@ if __name__=="__main__":
 
 
 
-wenjianzonghe=[]
 
-for dirpath,dirname,filename in os.walk(mulu):
-    for filenamex in filename:
-        wenjianzonghe.append(dirpath+'\\'+filenamex)
 
-xmind_files=[]
-for wenjainzonghex in wenjianzonghe:
-    bianshi=os.path.splitext(wenjainzonghex)[-1]
-    if bianshi==".xmind":
-        xmind_files.append(wenjainzonghex)
 
-for XFX in xmind_files:
-    print(XFX)
-    neirong=xmindparser.xmind_to_dict(XFX)
-    panduan=re.search(leirong,str(neirong))
-    if panduan != None:
-        print(XFX)
